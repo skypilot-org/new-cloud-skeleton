@@ -1,4 +1,6 @@
 '''
+This file should be placed at sky/skylet/providers/{cloudname}/node_provider.py
+
 Methods that start with an underscore (_) are specific to SkyPilot,
 and not part of the ray NodeProvider class definition.
 
@@ -27,11 +29,11 @@ class FluffyCloudError(Exception):
     pass
 
 
-def synchronized(f):
+def synchronized(func):
     def wrapper(self, *args, **kwargs):
         self.lock.acquire()
         try:
-            return f(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         finally:
             self.lock.release()
 
