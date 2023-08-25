@@ -21,11 +21,12 @@ class FluffyCloud(clouds.Cloud):
     _CLOUD_UNSUPPORTED_FEATURES = {
         clouds.CloudImplementationFeatures.STOP: 'FluffyCloud does not support stopping VMs.',
         clouds.CloudImplementationFeatures.AUTOSTOP: 'FluffyCloud does not support stopping VMs.',
-        clouds.CloudImplementationFeatures.MULTI_NODE: 'Multi-node is not supported by the FluffyCloud implementation yet.',
+        clouds.CloudImplementationFeatures.MULTI_NODE: 'Multi-node is not supported by the FluffyCloud implementation yet.'
+    }
     ########
     # TODO #
     ########
-    _MAX_CLUSTER_NAME_LEN_LIMIT = # TODO
+    _MAX_CLUSTER_NAME_LEN_LIMIT =  # TODO
 
     _regions: List[clouds.Region] = []
 
@@ -37,7 +38,6 @@ class FluffyCloud(clouds.Cloud):
     @classmethod
     def _max_cluster_name_length(cls) -> Optional[int]:
         return cls._MAX_CLUSTER_NAME_LEN_LIMIT
-
 
     @classmethod
     def regions(cls) -> List[clouds.Region]:
@@ -108,12 +108,9 @@ class FluffyCloud(clouds.Cloud):
                                     region: Optional[str] = None,
                                     zone: Optional[str] = None) -> float:
         del accelerators, use_spot, region, zone  # unused
-        ########
-        # TODO #
-        ########
-        # This function assumes accelerators are included as part of instance
-        # type. If not, you will need to change this. (However, you can do
-        # this later; `return 0.0` is a good placeholder.)
+        # FILL_IN: If accelerator costs are not included in instance_type cost,
+        # return the cost of the accelerators here. If accelerators are
+        # included in instance_type cost, return 0.0.
         return 0.0
 
     def get_egress_cost(self, num_gigabytes: float) -> float:
@@ -132,10 +129,8 @@ class FluffyCloud(clouds.Cloud):
         return isinstance(other, FluffyCloud)
 
     @classmethod
-    def get_default_instance_type(cls,
-                                  cpus: Optional[str] = None) -> Optional[str]:
-        return service_catalog.get_default_instance_type(cpus=cpus,
-                                                         clouds='fluffycloud')
+    def get_default_instance_type(cls, cpus: Optional[str] = None) -> Optional[str]:
+        return service_catalog.get_default_instance_type(cpus=cpus, clouds='fluffycloud')
 
     @classmethod
     def get_accelerators_from_instance_type(
@@ -218,7 +213,7 @@ class FluffyCloud(clouds.Cloud):
         assert len(accelerators) == 1, resources
         acc, acc_count = list(accelerators.items())[0]
         (instance_list, fuzzy_candidate_list
-        ) = service_catalog.get_instance_type_for_accelerator(
+         ) = service_catalog.get_instance_type_for_accelerator(
             acc,
             acc_count,
             use_spot=resources.use_spot,

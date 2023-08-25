@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 def launch(name: str,
            instance_type: str,
            region: str,
@@ -20,9 +23,8 @@ def remove(instance_id: str, api_key: str):
     """Removes instance with given INSTANCE_ID."""
 
 
-def set_tags(instance_id: str, tags: Dict, api_key: str)
-
-"""Set tags for instance with given INSTANCE_ID."""
+def set_tags(instance_id: str, tags: Dict, api_key: str):
+    """Set tags for instance with given INSTANCE_ID."""
 
 
 def list_instances(api_key: str):
