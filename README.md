@@ -32,4 +32,24 @@ When all is done, the user can run sky down and provisioner+executor will tear d
 
 ## Getting Started
 
-SkyPilot currently supports four possible clouds (AWS, GCP, Azure, RunPod, and Lambda Cloud). Now let's say you have a new cloud, called FluffyCloud, that you want SkyPilot to support. What do you need to do?
+SkyPilot currently supports five possible clouds (AWS, GCP, Azure, RunPod, and Lambda Cloud). Now let's say you have a new cloud, called FluffyCloud, that you want SkyPilot to support. What do you need to do?
+
+You need to:
+
+1. Write a NodeProvider for FluffyCloud. This is the most important part.
+2. Add the FluffyCloud catalog to SkyPilot and write functions that read this catalog.
+3. Write FluffyCloud setup code.
+4. Add FluffyCloud credential check to verify locally stored credentials. This is needed for a user to enable FluffyCloud.
+
+For reference, here is an actual merged PR for adding a new cloud to help you estimate what is required:
+
+- [Lambda Cloud](https://github.com/skypilot-org/skypilot/pull/1557)
+
+By completing the following steps, you will be able to run SkyPilot on FluffyCloud.
+
+- [Step 0](/docs/integration_steps/step_0-api-library.md)
+- [Step 1](/docs/integration_steps/step_1-node-provider.md)
+- [Step 2](/docs/integration_steps/step_2-catalog.md)
+- [Step 3](/docs/integration_steps/step_3-setup-code.md)
+- [Step 4](/docs/integration_steps/step_4-setup-code.md.md)
+- [Step 5](/docs/integration_steps/step_5-e2e-failover.md)
