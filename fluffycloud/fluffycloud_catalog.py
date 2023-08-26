@@ -81,6 +81,7 @@ def get_instance_type_for_accelerator(
                                                          acc_name=acc_name,
                                                          acc_count=acc_count,
                                                          cpus=cpus,
+                                                         memory=memory,
                                                          use_spot=use_spot,
                                                          region=region,
                                                          zone=zone)
@@ -96,8 +97,9 @@ def list_accelerators(
         gpus_only: bool,
         name_filter: Optional[str],
         region_filter: Optional[str],
+        quantity_filter: Optional[int],
         case_sensitive: bool = True
 ) -> Dict[str, List[common.InstanceTypeInfo]]:
     """Returns all instance types in FluffyCloud offering GPUs."""
-    return common.list_accelerators_impl('FluffyCloud', _df, gpus_only, name_filter,
-                                         case_sensitive)
+    return common.list_accelerators_impl(
+        'FluffyCloud', _df, gpus_only, name_filter, region_filter, quantity_filter, case_sensitive)
