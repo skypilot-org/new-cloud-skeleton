@@ -3,7 +3,9 @@ import typing
 from typing import Dict, Iterator, List, Optional, Tuple
 
 from sky import clouds
+from sky import status_lib
 from sky.clouds import service_catalog
+from sky.skylet.providers.scp import scp_utils
 
 if typing.TYPE_CHECKING:
     # Renaming to avoid shadowing variables.
@@ -270,3 +272,33 @@ class FluffyCloud(clouds.Cloud):
                                       zone: Optional[str] = None) -> bool:
         return service_catalog.accelerator_in_region_or_zone(
             accelerator, acc_count, region, zone, 'fluffycloud')
+
+    @classmethod
+    def query_status(cls, name: str, tag_filters: Dict[str, str],
+                     region: Optional[str], zone: Optional[str],
+                     **kwargs) -> List[status_lib.ClusterStatus]:
+        del tag_filters, region, zone, kwargs  # Unused.
+
+        # FILL_IN: For the status map, map the FluffyCloud status to the SkyPilot status.
+        # SkyPilot status is defined in sky/status_lib.py
+        # Example: status_map = {'CREATING': status_lib.ClusterStatus.INIT, ...}
+        # The keys are the FluffyCloud status, and the values are the SkyPilot status.
+        status_map = {
+            'CREATING': status_lib.ClusterStatus.INIT,
+            'EDITING': status_lib.ClusterStatus.INIT,
+            'RUNNING': status_lib.ClusterStatus.UP,
+            'STARTING': status_lib.ClusterStatus.INIT,
+            'RESTARTING': status_lib.ClusterStatus.INIT,
+            'STOPPING': status_lib.ClusterStatus.STOPPED,
+            'STOPPED': status_lib.ClusterStatus.STOPPED,
+            'TERMINATING': None,
+            'TERMINATED': None,
+        }
+        status_list = []
+        vms = scp_utils.SCPClient().list_instances()
+        for node in vms:
+            if node['virtualServerName'] == name:
+                node_status = status_map[node['virtualServerState']]
+                if node_status is not None:
+                    status_list.append(node_status)
+        return status_list
