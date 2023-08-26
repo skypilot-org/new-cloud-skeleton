@@ -5,11 +5,12 @@ from typing import Dict, Iterator, List, Optional, Tuple
 from sky import clouds
 from sky import status_lib
 from sky.clouds import service_catalog
-from sky.skylet.providers.scp import scp_utils
 
 if typing.TYPE_CHECKING:
     # Renaming to avoid shadowing variables.
     from sky import resources as resources_lib
+
+import fluffycloud_api as fc_api
 
 _CREDENTIAL_FILES = [
     # credential files for FluffyCloud,
@@ -295,10 +296,10 @@ class FluffyCloud(clouds.Cloud):
             'TERMINATED': None,
         }
         status_list = []
-        vms = scp_utils.SCPClient().list_instances()
+        vms = fc_api.list_instances()
         for node in vms:
-            if node['virtualServerName'] == name:
-                node_status = status_map[node['virtualServerState']]
+            if node['name'] == name:
+                node_status = status_map[node['status']]
                 if node_status is not None:
                     status_list.append(node_status)
         return status_list
