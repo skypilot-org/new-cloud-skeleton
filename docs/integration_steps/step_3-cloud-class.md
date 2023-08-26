@@ -6,4 +6,4 @@ Start by creating a copy of `fluffycloud/fluffycloud.py` and place it at `sky/cl
 
 ## Credentials file
 
-The credentials file contains the users credentials required to access your cloud.
+The credentials file contains the users credentials required to access your cloud. You can specify the location of files to check for credentials by adding them to the `_CREDENTIAL_FILES` list.
