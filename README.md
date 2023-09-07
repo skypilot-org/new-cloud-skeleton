@@ -34,7 +34,7 @@ When all is done, the user can run sky down and provisioner+executor will tear d
 
 ## Getting Started
 
-SkyPilot currently supports five possible clouds (AWS, GCP, Azure, RunPod, and Lambda Cloud). Now let's say you have a new cloud, called FluffyCloud, that you want SkyPilot to support. What do you need to do?
+Now let's say you have a new cloud, called FluffyCloud, that you want SkyPilot to support. What do you need to do?
 
 You need to:
 
