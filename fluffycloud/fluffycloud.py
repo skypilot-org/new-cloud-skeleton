@@ -3,11 +3,14 @@ import typing
 from typing import Dict, Iterator, List, Optional, Tuple
 
 from sky import clouds
+from sky import status_lib
 from sky.clouds import service_catalog
 
 if typing.TYPE_CHECKING:
     # Renaming to avoid shadowing variables.
     from sky import resources as resources_lib
+
+import fluffycloud_api as fc_api
 
 _CREDENTIAL_FILES = [
     # credential files for FluffyCloud,
@@ -21,11 +24,12 @@ class FluffyCloud(clouds.Cloud):
     _CLOUD_UNSUPPORTED_FEATURES = {
         clouds.CloudImplementationFeatures.STOP: 'FluffyCloud does not support stopping VMs.',
         clouds.CloudImplementationFeatures.AUTOSTOP: 'FluffyCloud does not support stopping VMs.',
-        clouds.CloudImplementationFeatures.MULTI_NODE: 'Multi-node is not supported by the FluffyCloud implementation yet.',
+        clouds.CloudImplementationFeatures.MULTI_NODE: 'Multi-node is not supported by the FluffyCloud implementation yet.'
+    }
     ########
     # TODO #
     ########
-    _MAX_CLUSTER_NAME_LEN_LIMIT = # TODO
+    _MAX_CLUSTER_NAME_LEN_LIMIT =  # TODO
 
     _regions: List[clouds.Region] = []
 
@@ -37,7 +41,6 @@ class FluffyCloud(clouds.Cloud):
     @classmethod
     def _max_cluster_name_length(cls) -> Optional[int]:
         return cls._MAX_CLUSTER_NAME_LEN_LIMIT
-
 
     @classmethod
     def regions(cls) -> List[clouds.Region]:
@@ -70,6 +73,14 @@ class FluffyCloud(clouds.Cloud):
         if region is not None:
             regions = [r for r in regions if r.name == region]
         return regions
+
+    @classmethod
+    def get_vcpus_mem_from_instance_type(
+        cls,
+        instance_type: str,
+    ) -> Tuple[Optional[float], Optional[float]]:
+        # FILL_IN: cloudname
+        return service_catalog.get_vcpus_mem_from_instance_type(instance_type, clouds='<cloudname>')
 
     @classmethod
     def zones_provision_loop(
@@ -108,12 +119,9 @@ class FluffyCloud(clouds.Cloud):
                                     region: Optional[str] = None,
                                     zone: Optional[str] = None) -> float:
         del accelerators, use_spot, region, zone  # unused
-        ########
-        # TODO #
-        ########
-        # This function assumes accelerators are included as part of instance
-        # type. If not, you will need to change this. (However, you can do
-        # this later; `return 0.0` is a good placeholder.)
+        # FILL_IN: If accelerator costs are not included in instance_type cost,
+        # return the cost of the accelerators here. If accelerators are
+        # included in instance_type cost, return 0.0.
         return 0.0
 
     def get_egress_cost(self, num_gigabytes: float) -> float:
@@ -132,10 +140,8 @@ class FluffyCloud(clouds.Cloud):
         return isinstance(other, FluffyCloud)
 
     @classmethod
-    def get_default_instance_type(cls,
-                                  cpus: Optional[str] = None) -> Optional[str]:
-        return service_catalog.get_default_instance_type(cpus=cpus,
-                                                         clouds='fluffycloud')
+    def get_default_instance_type(cls, cpus: Optional[str] = None) -> Optional[str]:
+        return service_catalog.get_default_instance_type(cpus=cpus, clouds='fluffycloud')
 
     @classmethod
     def get_accelerators_from_instance_type(
@@ -178,8 +184,8 @@ class FluffyCloud(clouds.Cloud):
             'region': region.name,
         }
 
-    def get_feasible_launchable_resources(self,
-                                          resources: 'resources_lib.Resources'):
+    def _get_feasible_launchable_resources(self,
+                                           resources: 'resources_lib.Resources'):
         if resources.use_spot:
             return ([], [])
         if resources.instance_type is not None:
@@ -218,7 +224,7 @@ class FluffyCloud(clouds.Cloud):
         assert len(accelerators) == 1, resources
         acc, acc_count = list(accelerators.items())[0]
         (instance_list, fuzzy_candidate_list
-        ) = service_catalog.get_instance_type_for_accelerator(
+         ) = service_catalog.get_instance_type_for_accelerator(
             acc,
             acc_count,
             use_spot=resources.use_spot,
@@ -267,3 +273,33 @@ class FluffyCloud(clouds.Cloud):
                                       zone: Optional[str] = None) -> bool:
         return service_catalog.accelerator_in_region_or_zone(
             accelerator, acc_count, region, zone, 'fluffycloud')
+
+    @classmethod
+    def query_status(cls, name: str, tag_filters: Dict[str, str],
+                     region: Optional[str], zone: Optional[str],
+                     **kwargs) -> List[status_lib.ClusterStatus]:
+        del tag_filters, region, zone, kwargs  # Unused.
+
+        # FILL_IN: For the status map, map the FluffyCloud status to the SkyPilot status.
+        # SkyPilot status is defined in sky/status_lib.py
+        # Example: status_map = {'CREATING': status_lib.ClusterStatus.INIT, ...}
+        # The keys are the FluffyCloud status, and the values are the SkyPilot status.
+        status_map = {
+            'CREATING': status_lib.ClusterStatus.INIT,
+            'EDITING': status_lib.ClusterStatus.INIT,
+            'RUNNING': status_lib.ClusterStatus.UP,
+            'STARTING': status_lib.ClusterStatus.INIT,
+            'RESTARTING': status_lib.ClusterStatus.INIT,
+            'STOPPING': status_lib.ClusterStatus.STOPPED,
+            'STOPPED': status_lib.ClusterStatus.STOPPED,
+            'TERMINATING': None,
+            'TERMINATED': None,
+        }
+        status_list = []
+        vms = fc_api.list_instances()
+        for node in vms:
+            if node['name'] == name:
+                node_status = status_map[node['status']]
+                if node_status is not None:
+                    status_list.append(node_status)
+        return status_list
