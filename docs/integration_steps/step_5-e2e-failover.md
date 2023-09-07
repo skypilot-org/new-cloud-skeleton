@@ -30,6 +30,9 @@ Copy the following functions into sky/backends/cloud_vm_ray_backend.py be sure t
         logger.warning(f'Got error(s) in {region.name}:')
         messages = '\n\t'.join(errors)
         logger.warning(f'{style.DIM}\t{messages}{style.RESET_ALL}')
+        # NOTE: you can check out other clouds' implementations of this function,
+        # which may intelligently block a whole zone / whole region depending on
+        # the errors thrown.
         self._blocked_resources.add(launchable_resources.copy(zone=None))
 ```
 
