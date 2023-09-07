@@ -1,4 +1,4 @@
-'''
+"""
 This file should be placed at sky/skylet/providers/{cloudname}/node_provider.py
 
 Methods that start with an underscore (_) are specific to SkyPilot,
@@ -6,7 +6,7 @@ and not part of the ray NodeProvider class definition.
 
 Template Usage:
     - Replace all the FILL_INs with your own code.
-'''
+"""
 
 import logging
 from typing import Any, Dict, List, Optional
@@ -127,7 +127,7 @@ class FluffyCloudNodeProvider(NodeProvider):
 
     @synchronized
     def _get_filtered_nodes(self, tag_filters: Dict[str, str]) -> Dict[str, Any]:
-        '''
+        """
         SkyPilot Method
         Caches the nodes with the given tag_filters.
 
@@ -148,7 +148,7 @@ class FluffyCloudNodeProvider(NodeProvider):
             - tags: Dict[str, str]
             - name: str
             - ip: str
-        '''
+        """
         instances = fc_api.list_instances(self.api_key)  # FILL_IN
 
         new_cache = {}
@@ -162,18 +162,18 @@ class FluffyCloudNodeProvider(NodeProvider):
         return self.cached_nodes
 
     def _get_node(self, node_id: str):
-        '''
+        """
         SkyPilot Method
         Returns the node with the given node_id, if it exists.
-        '''
+        """
         self._get_filtered_nodes({})  # Side effect: updates cache
         return self.cached_nodes.get(node_id, None)
 
     def _get_cached_node(self, node_id):
-        '''
+        """
         SkyPilot Method
         Returns the node with the given node_id, if it is cached.
-        '''
+        """
         if node_id in self.cached_nodes:
             return self.cached_nodes[node_id]
         return self._get_node(node_id=node_id)
