@@ -19,6 +19,8 @@ Detailed instructions upcoming! Contact the dev team on [SkyPilot Slack](https:/
 
 Here's a simplified overview of SkyPilot's architecture.
 
+TODO: diagram in google doc
+
 In this diagram, the user has two clouds enabled (AWS and GCP). This is what happens when a user launches a job with sky launch:
 
 1. The optimizer reads AWS Catalog and GCP Catalog and runs an algorithm to decide which cloud to run the job on. (Let's suppose the optimizer chooses AWS.) This information is then sent to the provisioner+executor.
