@@ -18,4 +18,4 @@ A catalog is a CSV file under [SkyPilot Catalogs](https://github.com/skypilot-or
 
 ## Parsing Catalog
 
-Create a copy of `fluffycloud.py` and place it at `sky/clouds/service_catalog/{cloudname_catalog}.py` aside from reanaming fluffly cloud to your cloud name, you do not need to make additional changes.
+Create a copy of `fluffycloud_catalog.py` and place it at `sky/clouds/service_catalog/{cloudname_catalog}.py`. Aside from renaming fluffly cloud to your cloud name, you do not need to make additional changes.
